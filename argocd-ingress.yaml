@@ -1,0 +1,55 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: default
+  generation: 2
+  labels:
+    app: argocd
+  managedFields:
+  - apiVersion: extensions/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:kubernetes.io/ingress.class: {}
+          f:traefik.ingress.kubernetes.io/router.tls: {}
+          f:traefik.ingress.kubernetes.io/router.tls.certresolver: {}
+        f:labels:
+          .: {}
+          f:app: {}
+      f:spec:
+        f:tls: {}
+    manager: kubectl-client-side-apply
+  - apiVersion: extensions/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:field.cattle.io/ingressState: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+      f:spec:
+        f:rules: {}
+    manager: rancher
+  name: argocd-ingress
+  namespace: argocd
+spec:
+  rules:
+  - host: dargocd.tcemt.tc.br
+    http:
+      paths:
+      - backend:
+          serviceName: argocd-server
+          servicePort: 80
+        path: /argocd
+        pathType: ImplementationSpecific
+  tls:
+  - secretName: traefik-cert
+status:
+  loadBalancer: {}
+
+
