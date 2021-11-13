@@ -5,13 +5,18 @@ metadata:
   labels:
     app: argocdrocks
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
-    traefik.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: default
 spec:
   rules:
-  - http:
+  - host: argocd.dominio.com.br
+    http:
       paths:
-      - path: /app
-        backend:
+      - backend:
           serviceName: website-service
           servicePort: 80
+        path: /argocd
+        pathType: ImplementationSpecific
+  tls:
+  - secretName: traefik-cert
