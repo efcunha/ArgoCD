@@ -261,11 +261,9 @@ Nós confirmamos, enviamos e assistimos ArgoCD pegar as mudanças e aplicá-las.
 
 # Conclusão
 
-Por meio deste artigo rápido, pudemos demonstrar e experimentar o uso do ArgoCD usando o Git como uma fonte da verdade para a implantação do aplicativo. 
+Por meio deste artigo rápido, pudemos demonstrar e experimentar o uso do ArgoCD usando o Git (GitLab) como uma fonte da verdade para a implantação do aplicativo. 
 
-Combinado com a distribuição leve K3D da RancherLabs, ambos podem ser executados facilmente em um laptop para fins de experimentação.
-
-Em um cenário da vida real, o ArgoCD faria parte de um pipeline de CI / CD corporativo seguro para implantar cargas de trabalho em clusters Kubernetes de produção.
+Em um cenário da vida real, o ArgoCD faria parte de um pipeline de CI/CD corporativo seguro para implantar cargas de trabalho em clusters Kubernetes de produção.
 
 Operadores GitOps, como ArgoCD ou FluxCD, definitivamente ajudam na implementação de cenários de Operações por Pull-Requests. 
 
