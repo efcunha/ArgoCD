@@ -162,13 +162,13 @@ Nosso aplicativo de demonstração é uma implantação de um servidor da web ng
 
 O aplicativo de demonstração está hospedado publicamente no github: https://github.com/sokube/argocd-rocks
 
-website-cm.yaml: um site html simples armazenado como um ConfigMap
+- website-cm.yaml: um site html simples armazenado como um ConfigMap
 
-website-deployment.yaml: Observe o ConfigMap montado como um volume no caminho de conteúdo html do site nginx padrão
+- website-deployment.yaml: Observe o ConfigMap montado como um volume no caminho de conteúdo html do site nginx padrão
 
-website-svc.yaml: Um serviço ClusterIP simples para nosso Ingress
+- website-svc.yaml: Um serviço ClusterIP simples para nosso Ingress
 
-website-ingress.yaml: Por favor, observe as anotações aqui com uma linha específica para traefik reescrever as solicitações de urls / app com /
+- website-ingress.yaml: Por favor, observe as anotações aqui com uma linha específica para traefik reescrever as solicitações de urls / app com /
 
 Como ArgoCD sincroniza um conteúdo de namespace com os manifestos em um caminho dentro de um repositório git, precisamos criar de antemão um namespace dedicado (dev):
 ```sh
@@ -227,13 +227,16 @@ spec:
       selfHeal: true
 EOF
 ```
-Vamos parar um momento na seção syncPolicy da definição do aplicativo ArgoCD:
+```sh
+$ kubectl apply -f application.yaml -n argocd
+```
+# Vamos parar um momento na seção syncPolicy da definição do aplicativo ArgoCD:
 
-as tentativas de sincronização automatizada falharam 5 vezes com os seguintes atrasos entre as tentativas: 5s, 10s, 20s, 40s, 80s. O número de novas tentativas, atrasos e fatores de multiplicação são configuráveis em uma seção de nova tentativa adicional (não ilustrada aqui).
+ - As tentativas de sincronização automatizada falharam 5 vezes com os seguintes atrasos entre as tentativas: 5s, 10s, 20s, 40s, 80s. O número de novas tentativas, atrasos e fatores de multiplicação são configuráveis em uma seção de nova tentativa adicional (não ilustrada aqui).
 
-prune especifica se os recursos devem ser removidos durante a sincronização automática (falso por padrão).
+- prune especifica se os recursos devem ser removidos durante a sincronização automática (falso por padrão).
 
-selfHeal especifica se a sincronização (parcial) deve ser feita se os recursos no cluster de destino do Kubernetes forem alterados enquanto nenhuma mudança git foi detectada (como uma exclusão manual de uma implantação, por exemplo) 
+- selfHeal especifica se a sincronização (parcial) deve ser feita se os recursos no cluster de destino do Kubernetes forem alterados enquanto nenhuma mudança git foi detectada (como uma exclusão manual de uma implantação, por exemplo) 
 ```sh
 $ kubectl apply -f application.yaml -n argocd
 ```
