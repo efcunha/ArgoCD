@@ -1,6 +1,13 @@
-# Instalando ArgoCD com Ingress Traefik
+# ArgoCD com Ingress Traefik
 
 ![argocd01](https://user-images.githubusercontent.com/52961166/141650959-3050af34-3b36-4b85-b921-c080c4f7264f.png)
+
+Instalando ArgoCD
+
+Argo CD é uma ferramenta declarativa de entrega contínua para Kubernetes baseada na abordagem GitOps.
+
+| Definições, configurações e ambientes de aplicativos devem ser declarativos e com controle de versão. 
+| A implantação de aplicativos e o gerenciamento do ciclo de vida devem ser automatizados, auditáveis e fáceis de entender. 
 
 Baixe o yaml de instalação do ArgoCD Latest:
 ```sh
