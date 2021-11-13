@@ -1,5 +1,7 @@
 # Instalando ArgoCD com Ingress Traefik
 
+![argocd01](https://user-images.githubusercontent.com/52961166/141650828-f6468d4d-6fef-45a0-a922-ee3d9aa86016.png)
+
 Baixe o yaml de instalação do ArgoCD Latest:
 ```sh
 wget -c https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
