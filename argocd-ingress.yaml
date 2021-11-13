@@ -39,7 +39,7 @@ metadata:
   namespace: argocd
 spec:
   rules:
-  - host: dargocd.tcemt.tc.br
+  - host: argocd.dominio.com.br
     http:
       paths:
       - backend:
