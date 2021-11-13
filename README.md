@@ -152,7 +152,7 @@ Agora use as credenciais admin e mysupersecretpassword como senha e devemos obte
 
 Você pode querer explorar um pouco a IU, mas como queremos automatizar a maior parte de nossa configuração, é melhor não configurar nada manualmente.   
 
-# aplicativo de demonstração
+# Aplicativo de Demonstração
 
 Usaremos um repositório público no GitHub como exemplo aqui, mas ArgoCD é agnóstico quanto à hospedagem dos manifestos do aplicativo, desde que eles sigam o protocolo git.
 
