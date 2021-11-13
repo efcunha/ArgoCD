@@ -152,4 +152,118 @@ Agora use as credenciais admin e mysupersecretpassword como senha e devemos obte
 
 Você pode querer explorar um pouco a IU, mas como queremos automatizar a maior parte de nossa configuração, é melhor não configurar nada manualmente.   
 
+# aplicativo de demonstração
 
+Usaremos um repositório público no GitHub como exemplo aqui, mas ArgoCD é agnóstico quanto à hospedagem dos manifestos do aplicativo, desde que eles sigam o protocolo git.
+
+Nosso aplicativo de demonstração é uma implantação de um servidor da web nginx com algum conteúdo (um ConfigMap que armazena o site e montado como um volume), um serviço e uma entrada para torná-lo acessível no / app: 
+
+![argocd01](https://user-images.githubusercontent.com/52961166/141651728-795081ef-a0f7-4c67-8d60-ddf2a70f756f.png)
+
+O aplicativo de demonstração está hospedado publicamente no github: https://github.com/sokube/argocd-rocks
+
+website-cm.yaml: um site html simples armazenado como um ConfigMap
+
+website-deployment.yaml: Observe o ConfigMap montado como um volume no caminho de conteúdo html do site nginx padrão
+
+website-svc.yaml: Um serviço ClusterIP simples para nosso Ingress
+
+website-ingress.yaml: Por favor, observe as anotações aqui com uma linha específica para traefik reescrever as solicitações de urls / app com /
+
+Como ArgoCD sincroniza um conteúdo de namespace com os manifestos em um caminho dentro de um repositório git, precisamos criar de antemão um namespace dedicado (dev):
+```sh
+$ kubectl create namespace dev
+```
+Queremos que nosso trabalho dentro do ArgoCD seja hospedado em um projeto dedicado chamado argocdrocks-project. Colocamos voluntariamente algumas restrições neste projeto, que se aplicarão a todos os aplicativos que dentro deste projeto: permitir apenas implantações em cluster no namespace dev e apenas para os repositórios github Sokube. 
+```sh
+$ cat > project.yaml << EOF 
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: argocdrocks-project
+  labels:
+    app: argocdrocks
+spec:
+  # Project description
+  description: Our ArgoCD Project to deploy our app locally
+  # Allow manifests to deploy only from Sokube git repositories 
+  sourceRepos:
+  - "https://github.com/sokube/*"
+  # Only permit to deploy applications in the same cluster
+  destinations:
+  - namespace: dev
+    server: https://kubernetes.default.svc
+  # Enables namespace orphaned resource monitoring.
+  orphanedResources:
+    warn: false
+EOF
+```
+```sh
+$ kubectl apply -f project.yaml -n argocd
+```
+A seguir, criaremos um aplicativo ArgoCD que sincronizará nossos manifestos Kubernetes hospedados na pasta do aplicativo em nosso repositório github branch featurebranch_1 com os recursos associados dentro do namespace dev em nosso cluster local:
+```sh
+$ cat > application.yaml << EOF 
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    app: argocdrocks
+  name: argocdrocks-app
+spec:
+  project: argocdrocks-project
+  source:
+    repoURL: https://github.com/sokube/argocd-rocks.git
+    targetRevision: featurebranch_1
+    path: app
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+EOF
+```
+Vamos parar um momento na seção syncPolicy da definição do aplicativo ArgoCD:
+
+as tentativas de sincronização automatizada falharam 5 vezes com os seguintes atrasos entre as tentativas: 5s, 10s, 20s, 40s, 80s. O número de novas tentativas, atrasos e fatores de multiplicação são configuráveis em uma seção de nova tentativa adicional (não ilustrada aqui).
+
+prune especifica se os recursos devem ser removidos durante a sincronização automática (falso por padrão).
+
+selfHeal especifica se a sincronização (parcial) deve ser feita se os recursos no cluster de destino do Kubernetes forem alterados enquanto nenhuma mudança git foi detectada (como uma exclusão manual de uma implantação, por exemplo) 
+```sh
+$ kubectl apply -f application.yaml -n argocd
+```
+A sincronização é imediata, e nossos vários recursos são criados dentro do nosso namespace dev:
+
+![argocd02](https://user-images.githubusercontent.com/52961166/141651747-4b090d57-84ab-4b89-a7bf-6947519df343.png)
+
+E nosso aplicativo foi encontrado corretamente em /app no endereço localhost: 
+
+![argocd03](https://user-images.githubusercontent.com/52961166/141651755-6773023d-30e2-42b3-84bb-e0d6e9f475bd.png)
+
+Qualquer mudança subsequente em nosso branch de recursos será escolhida por ArgoCD (que regularmente pesquisa o repositório git) e aplicada dentro de nosso cluster. Vamos modificar website-cm.yaml dentro de nosso branch feature_branch1: 
+```sh
+...
+          <h1>ArgoCD Rocks Really!</h1>
+          <p>Version 2</p>
+...
+```
+Nós confirmamos, enviamos e assistimos ArgoCD pegar as mudanças e aplicá-las. Aqui, atualizar o ConfigMap não aciona uma reimplantação, mas como o ConfigMap é montado como um volume, a mudança é selecionada pelo kubelet do Kubernetes após um minuto ou mais. 
+
+![argocd04](https://user-images.githubusercontent.com/52961166/141651765-06097cc3-f15a-43ee-bf49-ce5bc1309c0b.png)
+
+# Conclusão
+
+Por meio deste artigo rápido, pudemos demonstrar e experimentar o uso do ArgoCD usando o Git como uma fonte da verdade para a implantação do aplicativo. 
+
+Combinado com a distribuição leve K3D da RancherLabs, ambos podem ser executados facilmente em um laptop para fins de experimentação.
+
+Em um cenário da vida real, o ArgoCD faria parte de um pipeline de CI / CD corporativo seguro para implantar cargas de trabalho em clusters Kubernetes de produção.
+
+Operadores GitOps, como ArgoCD ou FluxCD, definitivamente ajudam na implementação de cenários de Operações por Pull-Requests. 
+
+Ambos os projetos, respectivamente projetos de incubação e sandbox CNCF, realmente decidiram unir forças para trazer uma experiência GitOps unificada, talvez logo padronizada, para a comunidade Kubernetes ... 
