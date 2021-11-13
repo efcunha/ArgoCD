@@ -118,6 +118,10 @@ spec:
 status:
   loadBalancer: {}
 ```  
+Execute o script para criar a entrada de ingress
+```sh
+$ kubectl apply -f argocd-ingress.yaml -n argocd
+```  
 Abra um navegador em https://dominio.com.br/argocd. 
 
 Observe que a instalação pode levar algum tempo para ser concluída. 
