@@ -2,7 +2,7 @@
 
 ![argocd01](https://user-images.githubusercontent.com/52961166/141650959-3050af34-3b36-4b85-b921-c080c4f7264f.png)
 
-Instalando ArgoCD
+# Instalando ArgoCD
 
 Argo CD é uma ferramenta declarativa de entrega contínua para Kubernetes baseada na abordagem GitOps.
 
