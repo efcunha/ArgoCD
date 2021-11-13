@@ -160,7 +160,7 @@ Nosso aplicativo de demonstração é uma implantação de um servidor da web ng
 
 ![argocd01](https://user-images.githubusercontent.com/52961166/141651728-795081ef-a0f7-4c67-8d60-ddf2a70f756f.png)
 
-O aplicativo de demonstração está hospedado publicamente no github: https://github.com/sokube/argocd-rocks
+O aplicativo de demonstração está hospedado publicamente na pasta app disponivel neste repositório.
 
 - website-cm.yaml: um site html simples armazenado como um ConfigMap
 
