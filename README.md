@@ -1,4 +1,4 @@
-Instalando ArgoCD com Ingress Traefik
+# Instalando ArgoCD com Ingress Traefik
 
 Baixe o yaml de instalação do ArgoCD Latest:
 ```sh
@@ -122,7 +122,7 @@ Abra um navegador em https://dominio.com.br/argocd.
 
 Observe que a instalação pode levar algum tempo para ser concluída. 
 
-imagem
+![argocd](https://user-images.githubusercontent.com/52961166/141650496-d983f707-2b1e-4ca9-978d-f8a23fd562b5.png)
 
 Por padrão, ArgoCD usa o nome do pod do servidor como a senha padrão para o usuário administrador, então vamos substituí-lo por mysupersecretpassword (usamos https://bcrypt-generator.com/ para gerar a versão de hash blowfish de "mysupersecretpassword" abaixo
 ```sh
@@ -134,7 +134,7 @@ kubectl -n argocd patch secret argocd-secret \
  ``` 
 Agora use as credenciais admin e mysupersecretpassword como senha e devemos obter uma instância ArgoCD vazia e pronta para uso!
 
-imagen
+![argocd1](https://user-images.githubusercontent.com/52961166/141650521-5a989556-21a6-468c-98d2-455b656c8007.png)
 
 Você pode querer explorar um pouco a IU, mas como queremos automatizar a maior parte de nossa configuração, é melhor não configurar nada manualmente.   
 
